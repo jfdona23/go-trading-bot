@@ -29,3 +29,4 @@ You can summon the bot by chatting directly with it (DM) or by mentioning it (@b
 |:-------:|:---------:|:---------------------------------------------:|:-----------------:|
 | search  | \<keyword\> | Search possible symbols for the given keyword | search salesforce |
 | global  | \<symbol\>  | Return the current price for the given symbol | search crm        |
+| forex   | \<from_currency\> \<to_currency\>  | Return the current exchange rates for the given currencies | forex ars usd  |
