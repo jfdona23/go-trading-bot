@@ -10,8 +10,8 @@ It can be configured using environment variables as follows:
 |   Variable  |       Description       |   Possible Values  | Default |
 |:-----------:|:-----------------------:|:------------------:|:-------:|
 | LOG         | Set the log level       | debug, error, info | info    |
-| BOT_TOKEN   | Discord bot API token   |                    |         |
-| STOCK_TOKEN | Alpha Vantage API token |                    |         |
+| BOT_TOKEN   | Discord bot API token   |     \<string\>     |         |
+| STOCK_TOKEN | Alpha Vantage API token |     \<string\>     |         |
 
 Compile...
 ```go
@@ -23,6 +23,8 @@ LOG=error SOTCK_TOKEN=GSDRFLH3456T4L5 BOT_TOKEN=7V67SDRFG7TYERG34.VE45235TT.G5Y3
 ```
 
 ## Usage
+You can summon the bot by chatting directly with it (DM) or by mentioning it (@botname) and the passing one of the following commands:
+
 | Command | Parameter |                  Description                  |      Example      |
 |:-------:|:---------:|:---------------------------------------------:|:-----------------:|
 | search  | \<keyword\> | Search possible symbols for the given keyword | search salesforce |
