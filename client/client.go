@@ -1,10 +1,14 @@
 package client
 
 import (
+	"os"
+
 	"github.com/jfdona23/go-trading-bot/helpers"
 
 	"github.com/bwmarrin/discordgo"
 )
+
+var log = helpers.GetLogger()
 
 // Type Alias
 type Session = *discordgo.Session
@@ -14,43 +18,44 @@ type client struct {
 	token string
 }
 
-var (
-	logLevel           string = helpers.Getenv("LOG", "info")
-	log                       = helpers.GetLogger(logLevel)
-	checkErrorAndPanic        = helpers.CheckErrorAndPanic
-)
-
-func New(token string) client {
-	c := client{token}
+func New() client {
+	tokenBot := os.Getenv("BOT_TOKEN")
+	c := client{tokenBot}
 	return c
 }
 
-func (c client) Start() Session {
+func (c client) Start() (Session, error) {
 	log.Info("Starting Bot...")
 
 	log.Debug("Authenticating against Discord...")
 	session, err := discordgo.New("Bot " + c.token)
-	checkErrorAndPanic(err)
+	if err != nil {
+		log.Error(err)
+		return session, err
+	}
 
 	log.Debug("Opening WebSocket connection...")
 	err = session.Open()
-	checkErrorAndPanic(err)
+	if err != nil {
+		log.Error(err)
+		return session, err
+	}
 
-	// Set the Intents where listen to
-	// GuildMessages + DirectMessages - Calculated with https://ziad87.net/intents/
-	const myIntents discordgo.Intent = 4608
-	log.Debug("Set Intents to ", myIntents)
+	// Set the Intents (Events) to listen to - Calculated with https://ziad87.net/intents/
+	const myIntents discordgo.Intent = 4608 // GuildMessages, DirectMessages
 	session.Identify.Intents = myIntents
+	log.Debug("Intents set to ", myIntents)
 
 	log.Info("Bot successfully started")
-	return session
+	return session, nil
 }
 
-func (c client) Stop(session Session) {
+func (c client) Stop(session Session) error {
 	log.Info("Stopping Bot...")
-	session.Close()
+	return session.Close()
 }
 
 func (c client) Handler(session Session, handler interface{}) {
+	log.Debug("Adding new handler: ", handler)
 	session.AddHandler(handler)
 }

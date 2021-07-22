@@ -2,9 +2,13 @@ package helpers
 
 import (
 	"os"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 )
+
+// Type Alias
+type LoggerType = *logrus.Logger
 
 var (
 	logLevel  string                  = Getenv("LOG", "info")
@@ -17,14 +21,14 @@ var (
 )
 
 // Common logging configuration
-func GetLogger(loglevel string) *logrus.Logger {
+func GetLogger() LoggerType {
 	var log = logrus.New()
+	logLevel = strings.ToLower(logLevel)
 	logFormat := new(logrus.TextFormatter)
 	logFormat.TimestampFormat = "2006-01-02 15:04:05"
 	logFormat.FullTimestamp = true
 	log.SetFormatter(logFormat)
 	log.SetLevel(logLevels[logLevel])
-
 	return log
 }
 
@@ -35,19 +39,4 @@ func Getenv(environmentVar string, defaultValue string) string {
 		return defaultValue
 	}
 	return value
-}
-
-// If error, log it
-func CheckErrorAndLog(e error) {
-	log := GetLogger(logLevel)
-	if e != nil {
-		log.Error(e)
-	}
-}
-
-// If error, panic
-func CheckErrorAndPanic(e error) {
-	if e != nil {
-		panic(e)
-	}
 }

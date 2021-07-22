@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"os"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
@@ -9,15 +10,25 @@ import (
 	"github.com/jfdona23/go-trading-bot/stockrequest"
 )
 
-var (
-	botUser          string = "<@866098491121598526>"
-	botNickname      string = "<@!866098491121598526>"
-	logLevel         string = helpers.Getenv("LOG", "info")
-	log                     = helpers.GetLogger(logLevel)
-	checkErrorAndLog        = helpers.CheckErrorAndLog
-)
+var log = helpers.GetLogger()
 
-func MessageCreate(s client.Session, m client.MsgEvent) {
+type Engine struct {
+	botUser     string
+	botNickname string
+	stock       stockrequest.Stockrequest
+}
+
+func New(stock stockrequest.Stockrequest) Engine {
+	var (
+		appID       string = os.Getenv("APPID")
+		botUser     string = "<@" + appID + ">"
+		botNickname string = "<@!" + appID + ">"
+	)
+	e := Engine{botUser, botNickname, stock}
+	return e
+}
+
+func (e Engine) MessageCreate(s client.Session, m client.MsgEvent) {
 	// Ignore all messages created by the bot itself
 	// This isn't required in this specific example but it's a good practice.
 	if m.Author.ID == s.State.User.ID {
@@ -25,12 +36,12 @@ func MessageCreate(s client.Session, m client.MsgEvent) {
 	}
 
 	// For mentions
-	if strings.HasPrefix(m.Content, botUser) || strings.HasPrefix(m.Content, botNickname) {
+	if strings.HasPrefix(m.Content, e.botUser) || strings.HasPrefix(m.Content, e.botNickname) {
 		var msgTrimmed string
-		msgTrimmed = strings.TrimPrefix(m.Content, botUser+" ")
-		msgTrimmed = strings.TrimPrefix(msgTrimmed, botNickname+" ")
+		msgTrimmed = strings.TrimPrefix(m.Content, e.botUser+" ")
+		msgTrimmed = strings.TrimPrefix(msgTrimmed, e.botNickname+" ")
 
-		message := parseMessage(msgTrimmed)
+		message := parseMessage(e.stock, msgTrimmed)
 		_, err := s.ChannelMessageSend(m.ChannelID, message)
 		if err != nil {
 			log.Error(err)
@@ -46,9 +57,11 @@ func MessageCreate(s client.Session, m client.MsgEvent) {
 	}
 
 	if isDM {
-		message := parseMessage(m.Content)
+		message := parseMessage(e.stock, m.Content)
 		_, err := s.ChannelMessageSend(m.ChannelID, message)
-		checkErrorAndLog(err)
+		if err != nil {
+			log.Error(err)
+		}
 		return
 	}
 }
@@ -60,11 +73,10 @@ func isDirectMessage(s client.Session, m client.MsgEvent) (bool, error) {
 			return false, err
 		}
 	}
-
 	return channel.Type == discordgo.ChannelTypeDM, nil
 }
 
-func parseMessage(message string) string {
+func parseMessage(stock stockrequest.Stockrequest, message string) string {
 	msgArray := strings.Split(message, " ")
 	cmd := strings.ToLower(msgArray[0])
 
@@ -72,16 +84,16 @@ func parseMessage(message string) string {
 	case "help":
 		return ShowHelp()
 	case "global":
-		response := stockrequest.GetSymbolGlobalQuote(msgArray[1])
+		response := stock.GetSymbolGlobalQuote(msgArray[1])
 		return GlobalQuoteIM(response)
 	case "search":
-		response := stockrequest.SearchSymbol(msgArray[1])
+		response := stock.SearchSymbol(msgArray[1])
 		return SearchSymbolIM(response)
 	case "forex":
-		response := stockrequest.GetForex(msgArray[1], msgArray[2])
+		response := stock.GetForex(msgArray[1], msgArray[2])
 		return ForexIM(response)
 	case "crypto":
-		response := stockrequest.GetCryptoRating(msgArray[1])
+		response := stock.GetCryptoRating(msgArray[1])
 		return CryptoRatingIM(response)
 	default:
 		return CommandNotFound(cmd)
