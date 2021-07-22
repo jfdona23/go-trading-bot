@@ -10,7 +10,7 @@ It can be configured using environment variables as follows:
 |   Variable  |       Description              |   Possible Values         | Default |
 |:-----------:|:------------------------------:|:-------------------------:|:-------:|
 | LOG         | Set the log level              | debug, error, info, trace | info    |
-| APPID       | Set the Discord Application ID |                           |         |
+| APPID       | Discord Application ID         |                           |         |
 | BOT_TOKEN   | Discord bot API token          |                           |         |
 | STOCK_TOKEN | Alpha Vantage API token        |                           |         |
 
