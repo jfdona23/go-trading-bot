@@ -1,48 +1,52 @@
 package main
 
 import (
+	"flag"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
-
-	"github.com/jfdona23/go-trading-bot/client"
-	"github.com/jfdona23/go-trading-bot/engine"
-	"github.com/jfdona23/go-trading-bot/helpers"
-	"github.com/jfdona23/go-trading-bot/stockrequest"
 )
 
-var log = helpers.GetLogger()
+var (
+	level             = flag.String("l", "info", "Log level to use")
+	authToken         = flag.String("t", "", "Bot authentication token")
+	alphaVantageToken = flag.String("alphavantage", "", "Alpha Vantage API token")
+	guildID           = flag.String("g", "", "Test guild ID. If not passed, bot registers commands globally")
+)
+
+func init() {
+	flag.Parse()
+
+	l := new(logger)
+	l.setLevel(*level)
+	setLogger(l)
+	Log.Info("Log level set to " + Log.getLevel())
+
+	if *authToken == "" {
+		panic("no authenticatin token was provided")
+	}
+
+	if *alphaVantageToken == "" {
+		Log.Warn("Alpha Vantage token not provided. Things may go wrong")
+	}
+}
 
 func main() {
-	startupTimeBegin := time.Now()
-	log.Info("Log level set to ", log.GetLevel())
-
-	// Start of DI
-	stockrequest := stockrequest.New()
-	engine := engine.New(stockrequest)
-	bot := client.New()
-	// End of DI
+	bot := NewClient(*authToken, *guildID)
 
 	session, err := bot.Start()
 	if err != nil {
-		log.Panic(err)
+		Log.Error("There was an error starting the bot: " + err.Error())
 	}
 
-	bot.Handler(session, engine.MessageCreate)
+	Log.Info("Press CTRL-C to exit.")
 
-	startupTimeEnd := time.Now()
-	startupTimeTotal := (startupTimeEnd.UnixNano() - startupTimeBegin.UnixNano()) / 1000000
-	log.Debug("Bot started in ", startupTimeTotal, " miliseconds")
-
-	log.Info("Press CTRL-C to exit.")
-
-	sc := make(chan os.Signal, 1)
-	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
-	<-sc
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
+	<-stop
 
 	err = bot.Stop(session)
 	if err != nil {
-		log.Panic(err)
+		Log.Error("There was an error stoping the bot: " + err.Error())
 	}
 }

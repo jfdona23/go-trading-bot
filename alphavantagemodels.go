@@ -1,11 +1,21 @@
-package stockrequest
+package main
 
-type GlobalQuoteResponse struct {
-	GQ    globalQuoteContent `json:"Global Quote"`
-	Error string
+type SearchSymbolResponse struct {
+	Results *[]searchSymbolResult `json:"bestMatches"`
 }
 
-type globalQuoteContent struct {
+type searchSymbolResult struct {
+	Symbol   string `json:"1. symbol"`
+	Name     string `json:"2. name"`
+	Region   string `json:"4. region"`
+	Currency string `json:"8. currency"`
+}
+
+type StockPriceResponse struct {
+	StockPrice *stockPriceContent `json:"Global Quote"`
+}
+
+type stockPriceContent struct {
 	Symbol        string `json:"01. symbol"`
 	PriceOpen     string `json:"02. open"`
 	PriceHigh     string `json:"03. high"`
@@ -16,20 +26,8 @@ type globalQuoteContent struct {
 	Change        string `json:"10. change percent"`
 }
 
-type SearchSymbolResponse struct {
-	Results []searchSymbolResult `json:"bestMatches"`
-}
-
-type searchSymbolResult struct {
-	Symbol   string `json:"1. symbol"`
-	Name     string `json:"2. name"`
-	Region   string `json:"4. region"`
-	Currency string `json:"8. currency"`
-}
-
 type ForexResponse struct {
-	FX    forexContent `json:"Realtime Currency Exchange Rate"`
-	Error string
+	Forex *forexContent `json:"Realtime Currency Exchange Rate"`
 }
 
 type forexContent struct {
@@ -42,8 +40,7 @@ type forexContent struct {
 }
 
 type CryptoRatingResponse struct {
-	CR    cryptoRatingContent `json:"Crypto Rating (FCAS)"`
-	Error string
+	CryptoRating *cryptoRatingContent `json:"Crypto Rating (FCAS)"`
 }
 
 type cryptoRatingContent struct {
