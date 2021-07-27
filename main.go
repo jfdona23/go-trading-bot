@@ -32,6 +32,9 @@ func init() {
 }
 
 func main() {
+	// Recover from panic to keep the bot uptime as high as possible
+	defer catchPanic()
+
 	bot := NewClient(*authToken, *guildID)
 
 	session, err := bot.Start()
@@ -48,5 +51,12 @@ func main() {
 	err = bot.Stop(session)
 	if err != nil {
 		Log.Error("There was an error stoping the bot: " + err.Error())
+	}
+}
+
+// Recovers from panic
+func catchPanic() {
+	if r := recover(); r != nil {
+		Log.Error("Recovered from panic %#v", r)
 	}
 }
