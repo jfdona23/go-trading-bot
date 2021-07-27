@@ -13,8 +13,8 @@ type Interaction = *discordgo.InteractionCreate
 
 // The client struct
 type Client struct {
-	token string // Bot authentication token
-	guild string // GuildID for testing purposes. If not passed, bot registers commands globally
+	Token string // Bot authentication token
+	Guild string // GuildID for testing purposes. If not passed, bot registers commands globally
 }
 
 // Constructor for a new Client struct
@@ -29,7 +29,7 @@ func (c Client) Start() (Session, error) {
 	startupTimeBegin := time.Now()
 
 	Log.Debug("Authenticating against Discord")
-	session, err := discordgo.New("Bot " + c.token)
+	session, err := discordgo.New("Bot " + c.Token)
 	if err != nil {
 		return session, err
 	}
@@ -50,7 +50,7 @@ func (c Client) Start() (Session, error) {
 
 	Log.Debug("Publishing commands handlers")
 	for _, appCmd := range commands {
-		_, err := session.ApplicationCommandCreate(session.State.User.ID, c.guild, appCmd)
+		_, err := session.ApplicationCommandCreate(session.State.User.ID, c.Guild, appCmd)
 		if err != nil {
 			Log.Error("Can't create '" + appCmd.Name + "' command: " + err.Error())
 		}
@@ -68,12 +68,12 @@ func (c Client) Stop(session Session) error {
 	println("") // Print a blank line for aesthetical reasons.
 	Log.Info("Stopping Bot")
 	Log.Debug("Deleting slash commands")
-	commands, err := session.ApplicationCommands(session.State.User.ID, c.guild)
+	commands, err := session.ApplicationCommands(session.State.User.ID, c.Guild)
 	if err != nil {
 		Log.Error("Error obtaining the list of commands to delete: " + err.Error())
 	}
 	for _, appCmd := range commands {
-		err := session.ApplicationCommandDelete(session.State.User.ID, c.guild, appCmd.ID)
+		err := session.ApplicationCommandDelete(session.State.User.ID, c.Guild, appCmd.ID)
 		if err != nil {
 			Log.Error("Can't delete '" + appCmd.Name + "' command: " + err.Error())
 		}
