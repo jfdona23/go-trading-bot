@@ -14,15 +14,22 @@ const (
 
 // Validate if the response structure is properly fullfilled by comparing it with an empty one
 func isValidResponseStruct(r interface{}) bool {
-	switch typ := r.(type) {
+	switch r := r.(type) {
+	// There is no invalid input for SearchSymbol, it just returns an empty slice of results.
 	case *SearchSymbolResponse:
-		return !reflect.DeepEqual(typ, new(SearchSymbolResponse))
+		return true
+	// The Stock Price error is an empty struct, including nested ones.
 	case *StockPriceResponse:
-		return !reflect.DeepEqual(typ, new(StockPriceResponse))
+		empty := &StockPriceResponse{&stockPriceContent{}}
+		return !reflect.DeepEqual(r, empty)
+	// The Forex error is a totally different struct rather than an empty one.
 	case *ForexResponse:
-		return !reflect.DeepEqual(typ, new(ForexResponse))
+		empty := &ForexResponse{}
+		return !reflect.DeepEqual(r, empty)
+	// The Crypto Rating error is a totally different struct rather than an empty one.
 	case *CryptoRatingResponse:
-		return !reflect.DeepEqual(typ, new(CryptoRatingResponse))
+		empty := &CryptoRatingResponse{}
+		return !reflect.DeepEqual(r, empty)
 	}
 	return false
 }
