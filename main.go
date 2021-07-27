@@ -7,6 +7,7 @@ import (
 	"syscall"
 )
 
+// Command line flags
 var (
 	level             = flag.String("l", "info", "Log level to use")
 	authToken         = flag.String("t", "", "Bot authentication token")
@@ -17,10 +18,10 @@ var (
 func init() {
 	flag.Parse()
 
-	l := new(logger)
-	l.setLevel(*level)
-	setLogger(l)
-	Log.Info("Log level set to " + Log.getLevel())
+	l := new(Logger)
+	l.SetLevel(*level)
+	SetLogger(l)
+	Log.Info("Log level set to " + Log.GetLevel())
 
 	if *authToken == "" {
 		panic("no authenticatin token was provided")

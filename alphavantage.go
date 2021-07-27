@@ -2,6 +2,7 @@ package main
 
 import "fmt"
 
+// Alpha Vantage URLs and Endpoints
 const (
 	alphaVantageBaseUrl string = "https://www.alphavantage.co/query?function="
 	searchSymbolUrl     string = alphaVantageBaseUrl + "SYMBOL_SEARCH&apikey=%s&keywords=%s"
@@ -11,14 +12,14 @@ const (
 )
 
 // Function to look for stock symbols from a keyword
-func searchSymbolRequest(keyword string) *SearchSymbolResponse {
+func SearchSymbolRequest(keyword string) *SearchSymbolResponse {
 	url := fmt.Sprintf(searchSymbolUrl, *alphaVantageToken, keyword)
-	response, err := httpGet(url)
+	response, err := HttpGet(url)
 	if err != nil {
 		Log.Error(err)
 	}
 	jsonResponse := new(SearchSymbolResponse)
-	err = responseToJsonStruct(response, jsonResponse)
+	err = ResponseToJsonStruct(response, jsonResponse)
 	if err != nil {
 		Log.Error(err)
 	}
@@ -26,14 +27,14 @@ func searchSymbolRequest(keyword string) *SearchSymbolResponse {
 }
 
 // Function to look for a symbol current trading data
-func stockPriceRequest(symbol string) *StockPriceResponse {
+func StockPriceRequest(symbol string) *StockPriceResponse {
 	url := fmt.Sprintf(stockPriceUrl, *alphaVantageToken, symbol)
-	response, err := httpGet(url)
+	response, err := HttpGet(url)
 	if err != nil {
 		Log.Error(err)
 	}
 	jsonResponse := new(StockPriceResponse)
-	err = responseToJsonStruct(response, jsonResponse)
+	err = ResponseToJsonStruct(response, jsonResponse)
 	if err != nil {
 		Log.Error(err)
 	}
@@ -41,14 +42,14 @@ func stockPriceRequest(symbol string) *StockPriceResponse {
 }
 
 // Function to retrieve currency exchange rates
-func forexRequest(fromCurrency string, toCurrency string) *ForexResponse {
+func ForexRequest(fromCurrency string, toCurrency string) *ForexResponse {
 	url := fmt.Sprintf(forexUrl, *alphaVantageToken, fromCurrency, toCurrency)
-	response, err := httpGet(url)
+	response, err := HttpGet(url)
 	if err != nil {
 		Log.Error(err)
 	}
 	jsonResponse := new(ForexResponse)
-	err = responseToJsonStruct(response, jsonResponse)
+	err = ResponseToJsonStruct(response, jsonResponse)
 	if err != nil {
 		Log.Error(err)
 	}
@@ -56,14 +57,14 @@ func forexRequest(fromCurrency string, toCurrency string) *ForexResponse {
 }
 
 // Function to retrieve crypto currency ratings (FCAS)
-func cryptoRatingRequest(symbol string) *CryptoRatingResponse {
+func CryptoRatingRequest(symbol string) *CryptoRatingResponse {
 	url := fmt.Sprintf(cryptoRatingUrl, *alphaVantageToken, symbol)
-	response, err := httpGet(url)
+	response, err := HttpGet(url)
 	if err != nil {
 		Log.Error(err)
 	}
 	jsonResponse := new(CryptoRatingResponse)
-	err = responseToJsonStruct(response, jsonResponse)
+	err = ResponseToJsonStruct(response, jsonResponse)
 	if err != nil {
 		Log.Error(err)
 	}

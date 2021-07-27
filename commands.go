@@ -70,8 +70,8 @@ var commands = []*discordgo.ApplicationCommand{
 
 // Bot Slash commands handlers
 var commandsHandlers = map[string]func(s Session, i Interaction){
-	searchSymbol: searchSymbolHandler,
-	stockPrice:   stockPriceHandler,
-	forex:        forexHandler,
-	cryptoRating: cryptoRatingHandler,
+	searchSymbol: SearchSymbolHandler,
+	stockPrice:   StockPriceHandler,
+	forex:        ForexHandler,
+	cryptoRating: CryptoRatingHandler,
 }

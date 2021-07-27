@@ -12,19 +12,19 @@ type Session = *discordgo.Session
 type Interaction = *discordgo.InteractionCreate
 
 // The client struct
-type client struct {
+type Client struct {
 	token string // Bot authentication token
 	guild string // GuildID for testing purposes. If not passed, bot registers commands globally
 }
 
-// Returns a new initialized client struct
-func NewClient(token string, guild string) client {
-	c := client{token, guild}
+// Constructor for a new Client struct
+func NewClient(token string, guild string) Client {
+	c := Client{token, guild}
 	return c
 }
 
 // Start a new client session
-func (c client) Start() (Session, error) {
+func (c Client) Start() (Session, error) {
 	Log.Info("Starting Bot")
 	startupTimeBegin := time.Now()
 
@@ -64,7 +64,7 @@ func (c client) Start() (Session, error) {
 }
 
 // Close client's session
-func (c client) Stop(session Session) error {
+func (c Client) Stop(session Session) error {
 	println("") // Print a blank line for aesthetical reasons.
 	Log.Info("Stopping Bot")
 	Log.Debug("Deleting slash commands")

@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// Common short responses
 const (
 	cmdNotFound string = "Command `%s` not found :disappointed:"
 	errorMsg    string = ":cry: There was an error.\n"
@@ -20,7 +21,7 @@ func isValidResponseStruct(r interface{}) bool {
 		return true
 	// The Stock Price error is an empty struct, including nested ones.
 	case *StockPriceResponse:
-		empty := &StockPriceResponse{&stockPriceContent{}}
+		empty := &StockPriceResponse{&StockPriceContent{}}
 		return !reflect.DeepEqual(r, empty)
 	// The Forex error is a totally different struct rather than an empty one.
 	case *ForexResponse:
@@ -34,8 +35,8 @@ func isValidResponseStruct(r interface{}) bool {
 	return false
 }
 
-// Build an Instant Message from a searchSymbolResponse object
-func searchSymbolBuildIM(r *SearchSymbolResponse) string {
+// Build an Instant Message from a SearchSymbolResponse object
+func SearchSymbolBuildIM(r *SearchSymbolResponse) string {
 	if !isValidResponseStruct(r) {
 		return errorMsg
 	}
@@ -53,7 +54,8 @@ func searchSymbolBuildIM(r *SearchSymbolResponse) string {
 	return fmt.Sprintf(head, len(*r.Results), body)
 }
 
-func stockPriceBuildIM(r *StockPriceResponse) string {
+// Build an Instant Message from a StockPriceResponse object
+func StockPriceBuildIM(r *StockPriceResponse) string {
 	if !isValidResponseStruct(r) {
 		return errorMsg
 	}
@@ -68,7 +70,8 @@ func stockPriceBuildIM(r *StockPriceResponse) string {
 		"        • Tendency: " + r.StockPrice.Change + " " + arrowEmoji
 }
 
-func forexBuildIM(r *ForexResponse) string {
+// Build an Instant Message from a ForexResponse object
+func ForexBuildIM(r *ForexResponse) string {
 	if !isValidResponseStruct(r) {
 		return errorMsg
 	}
@@ -79,7 +82,8 @@ func forexBuildIM(r *ForexResponse) string {
 		"        • Buy Price: " + r.Forex.BuyPrice + "\n"
 }
 
-func cryptoRatingBuildIM(r *CryptoRatingResponse) string {
+// Build an Instant Message from a CryptoRatingResponse object
+func CryptoRatingBuildIM(r *CryptoRatingResponse) string {
 	if !isValidResponseStruct(r) {
 		return errorMsg
 	}

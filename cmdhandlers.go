@@ -6,6 +6,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+// Command not found, interaction handler
 func cmdNotFoundHandler(s Session, i Interaction) {
 	interactionResponseData := &discordgo.InteractionResponseData{
 		Content: fmt.Sprintf(cmdNotFound, i.ApplicationCommandData().Name),
@@ -17,11 +18,12 @@ func cmdNotFoundHandler(s Session, i Interaction) {
 	s.InteractionRespond(i.Interaction, interactionResponse)
 }
 
-func searchSymbolHandler(s Session, i Interaction) {
+// SearchSymbolHandler, interaction handler
+func SearchSymbolHandler(s Session, i Interaction) {
 	keyword := i.ApplicationCommandData().Options[0].StringValue()
-	response := searchSymbolRequest(keyword)
+	response := SearchSymbolRequest(keyword)
 	interactionResponseData := &discordgo.InteractionResponseData{
-		Content: searchSymbolBuildIM(response),
+		Content: SearchSymbolBuildIM(response),
 	}
 	interactionResponse := &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
@@ -30,11 +32,12 @@ func searchSymbolHandler(s Session, i Interaction) {
 	s.InteractionRespond(i.Interaction, interactionResponse)
 }
 
-func stockPriceHandler(s Session, i Interaction) {
+// StockPriceHandler, interaction handler
+func StockPriceHandler(s Session, i Interaction) {
 	symbol := i.ApplicationCommandData().Options[0].StringValue()
-	response := stockPriceRequest(symbol)
+	response := StockPriceRequest(symbol)
 	interactionResponseData := &discordgo.InteractionResponseData{
-		Content: stockPriceBuildIM(response),
+		Content: StockPriceBuildIM(response),
 	}
 	interactionResponse := &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
@@ -43,12 +46,13 @@ func stockPriceHandler(s Session, i Interaction) {
 	s.InteractionRespond(i.Interaction, interactionResponse)
 }
 
-func forexHandler(s Session, i Interaction) {
+// ForexHandler, interaction handler
+func ForexHandler(s Session, i Interaction) {
 	fromCurrency := i.ApplicationCommandData().Options[0].StringValue()
 	toCurrency := i.ApplicationCommandData().Options[1].StringValue()
-	response := forexRequest(fromCurrency, toCurrency)
+	response := ForexRequest(fromCurrency, toCurrency)
 	interactionResponseData := &discordgo.InteractionResponseData{
-		Content: forexBuildIM(response),
+		Content: ForexBuildIM(response),
 	}
 	interactionResponse := &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
@@ -57,11 +61,12 @@ func forexHandler(s Session, i Interaction) {
 	s.InteractionRespond(i.Interaction, interactionResponse)
 }
 
-func cryptoRatingHandler(s Session, i Interaction) {
+// CryptoRatingHandler, interaction handler
+func CryptoRatingHandler(s Session, i Interaction) {
 	symbol := i.ApplicationCommandData().Options[0].StringValue()
-	response := cryptoRatingRequest(symbol)
+	response := CryptoRatingRequest(symbol)
 	interactionResponseData := &discordgo.InteractionResponseData{
-		Content: cryptoRatingBuildIM(response),
+		Content: CryptoRatingBuildIM(response),
 	}
 	interactionResponse := &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
