@@ -11,7 +11,7 @@ import (
 const (
 	// Default timeot for requests in seconds.
 	reqTimeout int = 10
-	// Maximum amount of bytes to read from a response when converted into a string.
+	// Maximum amount of bytes to read from a response.
 	maxResponseBytes int64 = 4096
 )
 
@@ -22,17 +22,23 @@ func HttpGet(url string) (*http.Response, error) {
 	if err != nil {
 		return response, err
 	}
-	Log.Debug("Request URL: " + response.Request.URL.String())
+	Log.Debug("Requested URL: " + response.Request.URL.String())
 	return response, nil
 }
 
-// Unmarshall a http response into a `target` structure.
+// Read a response up to `maxResponseBytes` and return its JSON representation unmashalled into a struct.
 func ResponseToJsonStruct(response *http.Response, target interface{}) error {
 	defer response.Body.Close()
-	err := json.NewDecoder(response.Body).Decode(target)
+	body, err := io.ReadAll(io.LimitReader(response.Body, maxResponseBytes))
 	if err != nil {
 		return err
 	}
+	Log.Debug("Received response: " + string(body))
+	err = json.Unmarshal(body, target)
+	if err != nil {
+		return err
+	}
+	Log.Debug("Unmarshalled JSON response: " + fmt.Sprint(target))
 	return nil
 }
 
@@ -43,6 +49,6 @@ func ResponseToString(response *http.Response) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	Log.Debug(fmt.Sprintf("Plain text response: %+v", string(body)))
+	Log.Debug("Received response: " + string(body))
 	return string(body), nil
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -28,7 +29,7 @@ func init() {
 	}
 
 	if *alphaVantageToken == "" {
-		Log.Warn("Alpha Vantage token not provided. Things may go wrong")
+		Log.Warn("Alpha Vantage token not provided.")
 	}
 }
 
@@ -43,7 +44,7 @@ func main() {
 		Log.Error("There was an error starting the bot: " + err.Error())
 	}
 
-	Log.Info("Press CTRL-C to exit.")
+	Log.Info("Press CTRL-C to exit")
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
@@ -58,6 +59,6 @@ func main() {
 // Recovers from panic
 func catchPanic() {
 	if r := recover(); r != nil {
-		Log.Error("Recovered from panic %#v", r)
+		Log.Error("Recovered from panic " + fmt.Sprintf("%#v", r))
 	}
 }

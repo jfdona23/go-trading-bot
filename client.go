@@ -48,7 +48,7 @@ func (c Client) Start() (Session, error) {
 	Log.Debug("Adding commands handlers")
 	session.AddHandler(executeHandlerIfExists)
 
-	Log.Debug("Publishing commands handlers")
+	Log.Debug("Publishing slash commands to Discord")
 	for _, appCmd := range commands {
 		_, err := session.ApplicationCommandCreate(session.State.User.ID, c.Guild, appCmd)
 		if err != nil {
@@ -67,7 +67,7 @@ func (c Client) Start() (Session, error) {
 func (c Client) Stop(session Session) error {
 	println("") // Print a blank line for aesthetical reasons.
 	Log.Info("Stopping Bot")
-	Log.Debug("Deleting slash commands")
+	Log.Debug("Deleting slash commands from Discord")
 	commands, err := session.ApplicationCommands(session.State.User.ID, c.Guild)
 	if err != nil {
 		Log.Error("Error obtaining the list of commands to delete: " + err.Error())
